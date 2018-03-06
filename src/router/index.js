@@ -20,6 +20,8 @@ var P_GetProductList = resolve => require(['@/components/productList/P_GetProduc
 var productEdit = resolve => require(['@/components/productList/productEdit.vue'], resolve)
 var productAdd = resolve => require(['@/components/productList/productAdd.vue'], resolve)
 
+var O_GetOrderList = resolve => require(['@/components/order/O_GetOrderList.vue'], resolve)
+
 // 懒加载方式，当路由被访问的时候才加载对应组件
 
 export default new Router({
@@ -50,7 +52,9 @@ export default new Router({
         { path: '/P_GetProductList/productEdit/:id', component: productEdit, name: '商品编辑' },
         { path: '/P_GetProductList/productAdd', component: productAdd, name: '商品添加' },        
 
-
+        // order
+        { path: '/O_GetOrderList', component: O_GetOrderList, name: '订单列表' },
+        
       ]
     },
   ]
