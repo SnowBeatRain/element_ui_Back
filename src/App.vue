@@ -31,5 +31,9 @@ export default {
   bottom: 0px;
   width: 100%;
 }
+.crumb {
+  height: 36px;
+  line-height: 36px!important;
+}
 </style>
   

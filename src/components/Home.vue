@@ -2,46 +2,56 @@
   <div id="app">
     <!-- header -->
     <div>
-      <el-header style="text-align: right; font-size: 12px">
-        <el-dropdown>
-          <i class="el-icon-setting" style="margin-right: 15px"></i>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>
-              <div @click="jumpTo()">
-                <span style="color: #555;font-size: 14px;">个人信息</span>
-              </div>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <div @click="jumpTo('/user/changepwd')">
-                <span style="color: #555;font-size: 14px;">修改密码</span>
-              </div>
-            </el-dropdown-item>
-            <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <span @click="aaa()">薛祥宇</span>
+      <el-header>
+        <div style="float: left;height: 60px;">
+          <img src="../assets/logo.png" style="height:60px;" alt="">
+        </div>
+        <div style="float: right; font-size: 12px">
+          <el-dropdown>
+            <i class="el-icon-setting" style="margin-right: 15px"></i>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <div @click="jumpTo()">
+                  <span style="color: #555;font-size: 14px;">个人信息</span>
+                </div>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <div @click="jumpTo('/user/changepwd')">
+                  <span style="color: #555;font-size: 14px;">修改密码</span>
+                </div>
+              </el-dropdown-item>
+              <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <span @click="aaa()">{{userName}}</span>
+        </div>
+      <div class="clear"></div>
       </el-header>
     </div>
     <!-- body -->
     <el-container>
-      <el-aside  style="background-color: rgb(238, 241, 246)">
-        <el-menu :default-active="$route.path" router :unique-opened='true' @select="handleSelect">
+      <aside style="background-color: rgb(238, 241, 246);">
+        <div style="text-align:center">
+          <img src="../assets/logo.png" style="width:30px;" alt="" @click="closeNav()">
+        </div>
+        <el-menu class="el-menu-vertical-demo" :default-active="$route.path" router :unique-opened='true' @select="handleSelect" :collapse='iscloseNav'>
           <template v-for="(item,index) in menuList">
             <el-submenu :index="index+''" :key="index">
               <template slot="title">
-                <i class="el-icon-menu"></i>{{item.name}}</template>
+                <i class="el-icon-menu"></i>
+                <span slot="title">{{item.name}}</span></template>
               <el-menu-item v-for="(ll,ii) in item.snippet" :key="ii" :index="'/'+ll.urlf.split('.')[0]">{{ll.title}}</el-menu-item>
             </el-submenu>
           </template>
         </el-menu>
-      </el-aside>
+      </aside>
       <!-- 右侧路由信息 -->
       <el-container>
         <el-main v-if="collapsed">
           <router-view></router-view>
         </el-main>
         <el-main v-else>
-            <h2>黄晓明后台管理</h2>
+          <h2>黄晓明后台管理</h2>
             <h2>友情链接：</h2>
             <ul>
               <li><a href="https://vuejs.org" target="_blank">黄晓明官网</a></li>
@@ -59,10 +69,13 @@ export default {
     return {
       defaultActiveIndex: ["0"],
       menuList: [],
-      collapsed: false
+      userName: "",
+      collapsed: false,
+      iscloseNav: false
     };
   },
   mounted() {
+    this.userName = getCookie("username");
     var url = window.location.href;
     if (url.split("#")[1] == "/") {
     } else {
@@ -99,9 +112,14 @@ export default {
             }
           }.bind(this)
         )
-        .catch(function(error) {
-          console.log(error);
-        });
+        .catch(
+          function(error) {
+            this.$notify.error({
+              title: "错误",
+              message: "错误：请检查网络"
+            });
+          }.bind(this)
+        );
     } else {
       this.$message({
         showClose: true,
@@ -140,13 +158,19 @@ export default {
           this.$router.push("/login");
         })
         .catch(() => {});
+    },
+    closeNav() {
+      this.iscloseNav = !this.iscloseNav;
+      if (this.iscloseNav) {
+        $(".el-aside").css({ width: "60px" });
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-@import "../../static/css/index.css";
+/* @import "../../static/css/index.css"; */
 .el-header {
   background-color: #b3c0d1;
   color: #333;
@@ -155,5 +179,12 @@ export default {
 
 .el-aside {
   color: #333;
+}
+/* .el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 300px;
+  min-height: 400px;
+} */
+.clear {
+  clear: both;
 }
 </style>

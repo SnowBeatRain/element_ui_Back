@@ -1,13 +1,13 @@
 <template>
   	<div class="login_page fillcontain">
 	  	<transition name="form-fade" mode="in-out">
-	  		<section class="form_contianer" v-show="showLogin">
+	  		<section class="form_contianer">
 		  		<div class="manage_tip">
 		  			<p>后台管理系统</p>
 		  		</div>
 		    	<el-form :model="loginForm" :rules="rules" ref="loginForm">
 					<el-form-item prop="username">
-						<el-input v-model="loginForm.username" placeholder="用户名"><span>dsfsf</span></el-input>
+						<el-input v-model="loginForm.username" placeholder="用户名"></el-input>
 					</el-form-item>
 					<el-form-item prop="password">
 						<el-input type="password" placeholder="密码" v-model="loginForm.password"></el-input>
@@ -37,14 +37,10 @@ export default {
           { required: true, message: "请输入用户名", trigger: "blur" }
         ],
         password: [{ required: true, message: "请输入密码", trigger: "blur" }]
-      },
-      showLogin: false
+      }
     };
   },
-  mounted() {
-    console.log(md5("123456"));
-    this.showLogin = true;
-  },
+  mounted() {},
   computed: {},
   methods: {
     submitForm(formName) {
@@ -61,6 +57,7 @@ export default {
                 var status = response.data.Status;
                 if (status === 1) {
                   setCookie("token", response.data.Result);
+                  setCookie("username", tt.loginForm.username);
                   this.$message({
                     showClose: true,
                     type: "success",
@@ -78,9 +75,14 @@ export default {
                 }
               }.bind(this)
             )
-            .catch(function(error) {
-              console.log(error);
-            });
+            .catch(
+              function(error) {
+                this.$notify.error({
+                  title: "错误",
+                  message: "错误：请检查网络"
+                });
+              }.bind(this)
+            );
         } else {
           this.$notify.error({
             title: "错误",
@@ -104,7 +106,6 @@ export default {
   background-color: #324057;
   height: 100%;
   text-align: center;
-
 }
 .manage_tip {
   /* position: absolute; */
@@ -117,7 +118,7 @@ export default {
   padding: 20px 0;
 }
 .form_contianer {
-    position: absolute;
+  position: absolute;
   left: calc(50% - 190px);
   top: calc(50% - 210px);
   /* .wh(320px, 210px);

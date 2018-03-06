@@ -1,10 +1,16 @@
 # my-vue
 
-> 我的第一个vue项目
+> 纯element-ui后台管理
 
 ## Build Setup
 
 ``` bash
+# 克隆下载项目
+git clone 地址
+
+# 进入文件夹
+cd XXX
+
 # install dependencies
 npm install
 
