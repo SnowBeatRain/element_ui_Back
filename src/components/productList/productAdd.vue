@@ -9,18 +9,18 @@
     </el-header>
 
     <el-main style="width:70%;">
-      <el-form :model="editForm" :rules="rules" ref="editForm" label-width="150px" class="demo-editForm">
+      <el-form :model="addForm" :rules="rules" ref="addForm" label-width="150px" class="demo-addForm">
         <el-form-item label="商品名称" prop="Name">
-          <el-input v-model="editForm.Name"></el-input>
+          <el-input v-model="addForm.Name"></el-input>
         </el-form-item>
         <el-form-item label="商品价格（元）" prop="Price">
-          <el-input v-model.number="editForm.Price"></el-input>
+          <el-input v-model.number="addForm.Price"></el-input>
         </el-form-item>
         <el-form-item label="商品库存（件）" prop="Stock">
-          <el-input v-model.number="editForm.Stock"></el-input>
+          <el-input v-model.number="addForm.Stock"></el-input>
         </el-form-item>
         <el-form-item label="商品图片" prop="Image">
-          <el-upload v-model="editForm.Image" class="avatar-uploader" :limit="5" :action="action" :on-preview="handlePictureCardPreview"
+          <el-upload v-model="addForm.Image" class="avatar-uploader" :limit="5" :action="action" :on-preview="handlePictureCardPreview"
             list-type="picture-card" :file-list="Images" :on-success="handleAvatarSuccess" :on-remove="handleRemove">
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -30,26 +30,25 @@
           <span>最多上传五张，且图片宽高比为：1/1</span>
         </el-form-item>
         <el-form-item label="邮费选择" prop="IsFreeShipping">
-          <el-radio-group v-model="editForm.IsFreeShipping">
+          <el-radio-group v-model="addForm.IsFreeShipping">
             <el-radio class="radio" :label="true">包邮</el-radio>
             <el-radio class="radio" :label="false">运费模版</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="商品简介" prop="Brief">
-          <el-input type="textarea" v-model="editForm.Brief"></el-input>
+          <el-input type="textarea" v-model="addForm.Brief"></el-input>
         </el-form-item>
         <el-form-item label="图文详情" prop="Details">
-          <el-button type="info" @click="clickOpenDetail(editForm.Details)">图文详情</el-button>
+          <el-button type="info" @click="clickOpenDetail(addForm.Details)">图文详情</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('editForm')">立即修改</el-button>
-          <el-button @click="resetForm('editForm')">重置</el-button>
+          <el-button type="primary" @click="submitForm('addForm')">立即添加</el-button>
+          <el-button @click="resetForm('addForm')">重置</el-button>
         </el-form-item>
       </el-form>
     </el-main>
     <!-- 弹出框 图文详情 -->
     <el-dialog title="图文编辑" :visible.sync="openDetails">
-      <!-- <button @click="getUEContent()">获取内容</button> -->
       <div class="editor-container">
         <UEditor :defaultMsg='defaultMsg' :config='config' ref="ueditor"></UEditor>
       </div>
@@ -106,7 +105,7 @@ export default {
       action: "http://hxm.nbxuanma.com/api/Photo/UpdateForImage?type=0",
       dialogImageUrl: "",
       dialogVisible: false,
-      editForm: {
+      addForm: {
         Name: "", //名称
         Price: "", //价格
         Stock: "", //库存
@@ -127,13 +126,11 @@ export default {
         Price: [
           {
             validator: checkPrice
-            // trigger: 'blur'
           }
         ],
         Stock: [
           {
             validator: checkStock
-            // trigger: 'blur'
           }
         ],
         IsFreeShipping: [
@@ -178,34 +175,31 @@ export default {
   },
   components: { UEditor },
   methods: {
-    // 修改提交
+    // 添加提交
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           //判断是否填写完整  --true
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
-            this.editLoading = true;
-            var para = Object.assign({}, this.editForm);
+            this.addLoading = true;
+            var para = Object.assign({}, this.addForm);
             // 将token传入参数中
             para.Token = getCookie("token");
-            para.ID = window.location.href.split("id=")[1];
             para.Image = para.Image.join(",");
-            // console.log(this.Images)
-            console.log(para);
             // 发保存请求
             this.$http
-              .post("/hxmback/api/Back/P_ProductEdit", para)
+              .post("/hxmback/api/Back/P_ProductAdd", para)
               .then(
-                function (response) {
-                  this.editLoading = false;
+                function(response) {
+                  this.addLoading = false;
                   var status = response.data.Status;
                   if (status === 1) {
                     // 表单重置
-                    this.$refs["editForm"].resetFields();
-                    this.editFormVisible = false;
+                    this.$refs["addForm"].resetFields();
+                    this.addFormVisible = false;
                     this.$router.push({
                       path: "/P_GetProductList"
-                    })
+                    });
                   } else if (status === 40001) {
                     this.$message({
                       showClose: true,
@@ -228,7 +222,7 @@ export default {
               )
               // 请求error
               .catch(
-                function (error) {
+                function(error) {
                   this.$notify.error({
                     title: "错误",
                     message: "错误：请检查网络"
@@ -249,15 +243,15 @@ export default {
     },
     /*
        移除图片 
-        handleRemove(file, fileList)  移除的文件，剩下的图片数组（带有域名，需要去掉）
+        handleRemove(file, fileList)  移除的文件，（需要重新打印查看返回参数）
       */
     handleRemove(file, fileList) {
       var newArr = [];
       for (let index = 0; index < fileList.length; index++) {
-        var element = [fileList[index].url.split(".com")[1]];
+        var element = [fileList[index].response.Result[0]];
         newArr = newArr.concat(element);
       }
-      this.editForm.Image = newArr;
+      this.addForm.Image = newArr;
     },
     /*
       上传成功的回调函数
@@ -269,7 +263,7 @@ export default {
     handleAvatarSuccess(response, file, fileList) {
       var arrImg = [];
       arrImg = arrImg.concat(response.Result[0]);
-      this.editForm.Image = this.editForm.Image.concat(arrImg);
+      this.addForm.Image = this.addForm.Image.concat(arrImg);
     },
     /*
       点击打开图文详情框
@@ -282,9 +276,8 @@ export default {
     },
     addSubmit() {
       var content = this.$refs.ueditor.getUEContent();
-      this.editForm.Details = encodeURIComponent(content);
+      this.addForm.Details = encodeURIComponent(content);
       this.openDetails = false;
-      console.log(this.editForm);
     },
     /*
       重置表单
@@ -293,58 +286,9 @@ export default {
       this.$refs[formName].resetFields();
     }
   },
-  mounted() {
-    var id = window.location.href.split("id=")[1];
-    this.$http
-      .get("/hxmback/api/Back/P_GetProductDetail", {
-        params: {
-          ID: id,
-          token: getCookie("token")
-        }
-      })
-      .then(
-        function(response) {
-          var status = response.data.Status;
-          if (status === 1) {
-            this.editForm = response.data.Result;
-            console.log(this.editForm);
-            var newArr = response.data.Result.Image;
-            var newObj = {};
-            for (var i = 0; i < newArr.length; i++) {
-              var element = [
-                {
-                  url: mainurl + newArr[i]
-                }
-              ];
-              this.Images = this.Images.concat(element);
-            }
-            // 将ID传入参数中
-            // this.editForm.ID = obj.ID;
-          } else if (status === 40001) {
-            this.$message({
-              showClose: true,
-              type: "warning",
-              message: response.data.Result
-            });
-            setTimeout(() => {
-              tt.$router.push({
-                path: "/login"
-              });
-            }, 1500);
-          }
-        }.bind(this)
-      )
-      // 请求error
-      .catch(
-        function(error) {
-          this.$notify.error({
-            title: "错误",
-            message: "错误：请检查网络"
-          });
-        }.bind(this)
-      );
-  }
+  mounted() {}
 };
 </script>
 <style scoped>
+
 </style>

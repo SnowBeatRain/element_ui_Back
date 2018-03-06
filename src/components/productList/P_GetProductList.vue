@@ -45,58 +45,6 @@
        layout="prev, pager, next,jumper" :page-count="pageCount">
       </el-pagination>
     </div>
-    <!--编辑界面-->
-    <el-dialog title="编辑" :visible.sync="editFormVisible">
-      <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-        <el-form-item label="账号" prop="Name">
-          <el-input v-model="editForm.Name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="Password">
-          <el-input type="password" v-model="editForm.Password" :maxlength="20" :clearable='true'></el-input>
-        </el-form-item>
-        <el-form-item label="锁定">
-          <el-radio-group v-model="editForm.IsLock">
-            <el-radio class="radio" :label="true">是</el-radio>
-            <el-radio class="radio" :label="false">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="角色">
-          <el-select v-model="editForm.RoleID" placeholder="请选择角色">
-            <el-option v-for="item in roleList" :key="item.ID" :label="item.Name" :value="item.ID"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click.native="editFormVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
-      </div>
-    </el-dialog>
-    <!-- 新增界面 -->
-    <el-dialog title="新增" :visible.sync="addFormVisible">
-      <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-        <el-form-item label="账号" prop="Name">
-          <el-input v-model="addForm.Name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="Password">
-          <el-input type="password" v-model="addForm.Password" :maxlength="20" :clearable='true'></el-input>
-        </el-form-item>
-        <!-- <el-form-item label="锁定">
-          <el-radio-group v-model="addForm.IsLock">
-            <el-radio class="radio" :label="true">是</el-radio>
-            <el-radio class="radio" :label="false">否</el-radio>
-          </el-radio-group>
-        </el-form-item> -->
-        <el-form-item label="角色">
-          <el-select v-model="addForm.RoleID" placeholder="请选择角色">
-            <el-option v-for="item in roleList" :key="item.ID" :label="item.Name" :value="item.ID"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click.native="addFormVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -274,51 +222,51 @@ export default {
     handleEdit(index, row) {
       console.log(Object.assign({}, row));
       var obj = Object.assign({}, row);
-       var urlId = obj.ID;
+      var urlId = obj.ID;
       this.$router.push("/P_GetProductList/productEdit/id=" + urlId);
-    //   this.editFormVisible = true;
-      // 根据id获取用户信息
-    //   this.$http
-    //     .get("/hxmback/api/Admin/GetAdminByID", {
-    //       params: {
-    //         ID: obj.ID
-    //       }
-    //     })
-    //     .then(
-    //       function(response) {
-    //         var status = response.data.Status;
-    //         if (status === 1) {
-    //           this.editForm = response.data.Result;
-    //           // 将管理员ID传入参数中
-    //           this.editForm.ID = obj.ID;
-    //         } else if (status === 40001) {
-    //           this.$message({
-    //             showClose: true,
-    //             type: "warning",
-    //             message: response.data.Result
-    //           });
-    //           setTimeout(() => {
-    //             tt.$router.push({
-    //               path: "/login"
-    //             });
-    //           }, 1500);
-    //         }
-    //       }.bind(this)
-    //     )
-    //     // 请求error
-    //     .catch(
-    //       function(error) {
-    //         this.$notify.error({
-    //           title: "错误",
-    //           message: "错误：请检查网络"
-    //         });
-    //       }.bind(this)
-    //     );
+    },
+    handleDelete(index, row) {
+      var obj = Object.assign({}, row);
+      this.$confirm("确认删除吗？", "提示", {}).then(() => {
+        this.$http
+          .get("/hxmback/api/Back/P_ProductDel", {
+            params: {
+              token: getCookie("token"),
+              id: obj.ID
+            }
+          })
+          .then(
+            function(response) {
+              var status = response.data.Status;
+              if (status === 1) {
+                this.getInfo();
+              } else if (status === 40001) {
+                this.$message({
+                  showClose: true,
+                  type: "warning",
+                  message: response.data.Result
+                });
+                setTimeout(() => {
+                  tt.$router.push({
+                    path: "/login"
+                  });
+                }, 1500);
+              }
+            }.bind(this)
+          )
+          // 请求error
+          .catch(
+            function(error) {
+              this.$notify.error({
+                title: "错误",
+                message: "错误：请检查网络"
+              });
+            }.bind(this)
+          );
+      });
     },
     handleAdd() {
-      this.addFormVisible = true;
-      // 获取角色列表
-      this.getRoleList();
+      this.$router.push("/P_GetProductList/productAdd");
     },
     editSubmit() {
       this.$refs.editForm.validate(valid => {

@@ -18,6 +18,8 @@ var power = resolve => require(['../components/role/power.vue'], resolve)
 var B_GetBannerList = resolve => require(['@/components/banner/B_GetBannerList.vue'], resolve)
 var P_GetProductList = resolve => require(['@/components/productList/P_GetProductList.vue'], resolve)
 var productEdit = resolve => require(['@/components/productList/productEdit.vue'], resolve)
+var productAdd = resolve => require(['@/components/productList/productAdd.vue'], resolve)
+
 // 懒加载方式，当路由被访问的时候才加载对应组件
 
 export default new Router({
@@ -46,6 +48,7 @@ export default new Router({
         // productList
         { path: '/P_GetProductList', component: P_GetProductList, name: '商品列表' },
         { path: '/P_GetProductList/productEdit/:id', component: productEdit, name: '商品编辑' },
+        { path: '/P_GetProductList/productAdd', component: productAdd, name: '商品添加' },        
 
 
       ]

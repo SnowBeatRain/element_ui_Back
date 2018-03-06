@@ -9,6 +9,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 import router from './router'
 import axios from 'axios'
 
+//全局引入百度编辑器
+import '../static/UEtidor/ueditor.config.js'
+import '../static/UEtidor/ueditor.all.min.js'
+import '../static/UEtidor/lang/zh-cn/zh-cn.js'
+import '../static/UEtidor/ueditor.parse.min.js'
+
 Vue.use(ElementUI)
 FastClick.attach(document.body)
 
