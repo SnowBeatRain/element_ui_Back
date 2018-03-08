@@ -32,7 +32,7 @@
     <el-container>
       <aside style="background-color: rgb(238, 241, 246);">
         <div style="text-align:center">
-          <img src="../assets/logo.png" style="width:30px;" alt="" @click="closeNav()">
+          <img src="../assets/logo.png" style="width:30px;height:30px;" alt="" @click="closeNav()">
         </div>
         <el-menu class="el-menu-vertical-demo" :default-active="$route.path" router :unique-opened='true' @select="handleSelect" :collapse='iscloseNav'>
           <template v-for="(item,index) in menuList">

@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from '@/components/Hello'
 
-Vue.use(Router)
 // 路由页面导入
 import login from '@/components/Login.vue'
 import home from '@/components/Home.vue'
@@ -23,6 +22,7 @@ var productAdd = resolve => require(['@/components/productList/productAdd.vue'],
 var O_GetOrderList = resolve => require(['@/components/order/O_GetOrderList.vue'], resolve)
 
 // 懒加载方式，当路由被访问的时候才加载对应组件
+Vue.use(Router)
 
 export default new Router({
   routes: [
@@ -42,9 +42,9 @@ export default new Router({
         { path: '/manage', component: manage, name: '管理员管理', },
         { path: '/manage/detail', component: detail, name: '管理员详情' },
         // role
-        { path: '/role', component: role, name: '角色管理' },
+        { path: '/role', component: role, name: '权限管理' },
         { path: '/power', component: power, name: '角色管理' },
-        { path: '/role/rolelimit/:id', component: roleLimit, name: '权限管理' },
+        { path: '/role/rolelimit/:id', component: roleLimit, name: '权限设置' },
         // banner
         { path: '/B_GetBannerList', component: B_GetBannerList, name: 'Banner管理' },
         // productList
