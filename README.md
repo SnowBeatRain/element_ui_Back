@@ -2,11 +2,6 @@
 
 > 纯element-ui后台管理
 
-# 废弃：
-此后台由于使用的vue-cli版本过低导致在在渲染table数据时是有警告：
-[Vue warn]: You may have an infinite update loop in a component render function.
-请跳转新版本地址：<a href="https://github.com/SnowBeatRain/Vue_element_back" targer="_blank"></a>
-
 ## Build Setup
 
 ``` bash
